@@ -1,4 +1,5 @@
 import { WINNER_COMBOS } from '../models/BoardModels'
+import type { BoardGame } from '../App'
 
 /**
  * Module for Board Logic
@@ -7,7 +8,7 @@ import { WINNER_COMBOS } from '../models/BoardModels'
 /**
  * Check the winner from the given `boardGame`
  */
-export const checkWinner = (boardGame: any) => {
+export const checkWinner = (boardGame: BoardGame) => {
   for (const combo of WINNER_COMBOS) {
     const [a, b, c] = combo
 
@@ -21,4 +22,4 @@ export const checkWinner = (boardGame: any) => {
 /**
  * Check if the given `boardGame` has finished
  */
-export const checkEndGame = (boardGame: any) => boardGame.every((square: any) => square !== null)
+export const checkEndGame = (boardGame: BoardGame) => boardGame.every((square) => square)
