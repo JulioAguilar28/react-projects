@@ -1,30 +1,51 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect } from 'react'
 import './App.css'
 
+const CAT_ENDPOINT_FACT_URL = 'https://catfact.ninja/fact'
+const CAT_ENDPOINT_IMG_URL = 'https://cataas.com'
+
+type FactResponse = {
+  fact: string
+  length: number
+}
+
+type CatImageResponse = {
+  file: string
+  url: string
+}
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [fact, setFact] = useState<string>('')
+  const [imgUrl, setImgUrl] = useState<string>('')
+
+  useEffect(() => {
+    fetch(CAT_ENDPOINT_FACT_URL)
+      .then((response) => response.json())
+      .then((data: FactResponse) => {
+        setFact(data.fact)
+      })
+  }, [])
+
+  useEffect(() => {
+    if (!fact) return
+
+    const threeFirstWord = fact.split(' ', 3).join(' ')
+    fetch(`${CAT_ENDPOINT_IMG_URL}/cat/says/${threeFirstWord}?size=50&color=red&json=true`)
+      .then((response) => response.json())
+      .then((data: CatImageResponse) => {
+        setImgUrl(`${CAT_ENDPOINT_IMG_URL}/${data.url}`)
+      })
+  }, [fact])
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>count is {count}</button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
-    </>
+    <main>
+      <h1>Cat Random App</h1>
+
+      {fact && <p>{fact}</p>}
+      {imgUrl && (
+        <img src={imgUrl} alt={`Image extracted using the first three words for ${fact}`} />
+      )}
+    </main>
   )
 }
 

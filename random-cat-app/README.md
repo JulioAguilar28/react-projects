@@ -3,7 +3,7 @@
 APIs:
 
 - Facts Random: https://catfact.ninja/fact
-- Image Random: https://cataas.com/cat/says/hello
+- Image Random: https://cataas.com/
 
 - Recuperar un hecho aleatorio de gatos de la primera API
 - Recuperar la primera palabra del hecho
