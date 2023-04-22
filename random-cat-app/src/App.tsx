@@ -11,9 +11,13 @@ function App() {
       <h1>Cat Random App</h1>
 
       <button onClick={refreshFactHandler}>Get Random Fact</button>
-      {fact && <p>{fact}</p>}
+      {fact && <p data-testid="fact">{fact}</p>}
       {imgUrl && (
-        <img src={imgUrl} alt={`Image extracted using the first three words for ${fact}`} />
+        <img
+          data-testid="img"
+          src={imgUrl}
+          alt={`Image extracted using the first three words for ${fact}`}
+        />
       )}
     </main>
   )
