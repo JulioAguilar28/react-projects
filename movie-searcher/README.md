@@ -5,7 +5,7 @@ Creación de una aplicación para buscar peliculas
 API a usar:
 
 - https://www.omdbapi.com/
-- API_KEY = 4287ad07
+- API_KEY = 2deddb18
 
 Requerimientos
 
