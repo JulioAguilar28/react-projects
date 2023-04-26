@@ -1,8 +1,13 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useMemo, useCallback } from 'react'
 import { Movie } from '../models/Movie'
 import { getMoviesBySearchRequest } from '../services/MoviesService'
 
-export function useMovies({ search }: { search: string }) {
+type Props = {
+  search: string
+  sort: boolean
+}
+
+export function useMovies({ search, sort }: Props) {
   const [movies, setMovies] = useState<Array<Movie>>([])
   const [loading, setLoading] = useState<boolean>(false)
   /**
@@ -10,7 +15,12 @@ export function useMovies({ search }: { search: string }) {
    */
   const prevSearch = useRef<string>(search)
 
-  const getMovies = async () => {
+  /**
+   * useCallback hook helps us to memorize a function defition
+   * between renders and only executes when the given
+   * dependencies or function's parameters have changed
+   */
+  const getMovies = useCallback(async (search: string) => {
     if (prevSearch.current === search) return
 
     try {
@@ -23,7 +33,17 @@ export function useMovies({ search }: { search: string }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  return { movies, getMovies, loading }
+  /**
+   * useMemo hook helps us to memorize the previous state
+   * between renders and only executes when
+   * the given dependecies have changed
+   */
+  const sortedMovies = useMemo(
+    () => (sort ? [...movies].sort((a, b) => a.title.localeCompare(b.title)) : movies),
+    [movies, sort]
+  )
+
+  return { movies: sortedMovies, getMovies, loading }
 }

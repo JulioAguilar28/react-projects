@@ -1,19 +1,21 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import Movies from './components/Movies'
 import { useMovies } from './hooks/useMovies'
 import useSearch from './hooks/useSearch'
+import debounce from 'just-debounce-it'
 import './App.css'
 
 function App() {
+  const [sort, setSort] = useState<boolean>(false)
   const { search, setSearchHandler, error } = useSearch()
-  const { movies, getMovies, loading } = useMovies({ search })
+  const { movies, getMovies, loading } = useMovies({ search, sort })
 
   /**
    * This is a no controlled way, because, we do not save
    * the information retrieved from a Form
    */
   // const submitHandler = (event: React.FormEvent) => {
-  //   event.preventDefault()0
+  //   event.preventDefault()
   //   const formData = new FormData(event.target as HTMLFormElement)
   //   /**
   //    * This way we can get the information from a Form
@@ -23,15 +25,25 @@ function App() {
   //   console.log(fields)
   // }
 
+  const debouncedGetMovies = useCallback(
+    debounce((search: string) => getMovies(search), 500),
+    []
+  )
+
   const queryChangeHandler = (event: React.ChangeEvent) => {
     const target = event.currentTarget as HTMLInputElement
     const value = target.value
     setSearchHandler(value)
+    debouncedGetMovies(value)
   }
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault()
-    getMovies()
+    getMovies(search)
+  }
+
+  const changeSortHandler = () => {
+    setSort(!sort)
   }
 
   return (
@@ -48,6 +60,10 @@ function App() {
             onChange={queryChangeHandler}
           />
           <button type="submit">Search</button>
+          <label>
+            Sort movies
+            <input type="checkbox" checked={sort} onChange={changeSortHandler} />
+          </label>
         </form>
         {error && <p style={{ color: 'red' }}>{error}</p>}
       </header>
