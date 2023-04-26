@@ -8,8 +8,13 @@ export type MovieResponse = {
 
 export type SearchMovieResponse = {
   Search: Array<MovieResponse>
-  totalResult: string
+  totalResults: string
   Response: string
+}
+
+export type SearchMovieFailedResponse = {
+  Response: string
+  Error: string
 }
 
 export type Movie = {
@@ -19,3 +24,11 @@ export type Movie = {
   type: string
   poster: string
 }
+
+export const parseMovie = (json: MovieResponse): Movie => ({
+  id: json.imdbID,
+  title: json.Title,
+  year: json.Year,
+  type: json.Type,
+  poster: json.Poster
+})

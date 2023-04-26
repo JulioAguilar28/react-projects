@@ -5,8 +5,8 @@ import useSearch from './hooks/useSearch'
 import './App.css'
 
 function App() {
-  const { movies } = useMovies()
   const { search, setSearchHandler, error } = useSearch()
+  const { movies, getMovies } = useMovies({ search })
 
   /**
    * This is a no controlled way, because, we do not save
@@ -31,7 +31,7 @@ function App() {
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault()
-    console.log(event)
+    getMovies()
   }
 
   return (
