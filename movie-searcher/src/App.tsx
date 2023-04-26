@@ -6,7 +6,7 @@ import './App.css'
 
 function App() {
   const { search, setSearchHandler, error } = useSearch()
-  const { movies, getMovies } = useMovies({ search })
+  const { movies, getMovies, loading } = useMovies({ search })
 
   /**
    * This is a no controlled way, because, we do not save
@@ -52,9 +52,7 @@ function App() {
         {error && <p style={{ color: 'red' }}>{error}</p>}
       </header>
 
-      <main>
-        <Movies movies={movies} />
-      </main>
+      <main>{loading ? <p>Loading...</p> : <Movies movies={movies} />}</main>
     </div>
   )
 }

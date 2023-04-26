@@ -14,13 +14,9 @@ type MoviesResponse = SearchMovieResponse | SearchMovieFailedResponse
 export const getMoviesBySearchRequest = async (search: string) => {
   if (!search) return []
 
-  try {
-    const response = await fetch(`${BASE_API_WITH_APIKEY}&s=${search}`)
-    const data = (await response.json()) as unknown as MoviesResponse
-    return data?.Response === ResponseStatus.True
-      ? (data as SearchMovieResponse).Search.map(parseMovie)
-      : []
-  } catch (e) {
-    throw new Error('Something went wrong')
-  }
+  const response = await fetch(`${BASE_API_WITH_APIKEY}&s=${search}`)
+  const data = (await response.json()) as unknown as MoviesResponse
+  return data?.Response === ResponseStatus.True
+    ? (data as SearchMovieResponse).Search.map(parseMovie)
+    : []
 }
