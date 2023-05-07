@@ -4,7 +4,7 @@ Creación de un e-commerce con carrito de compra
 
 ### Requerimientos para Ecommerce
 
-[ ] Muestra una lista de productos que vienen de un JSON
+[✓] Muestra una lista de productos que vienen de un JSON
 [ ] Añade un filtro por categoría
 [ ] Añade un filtro por precio
 
