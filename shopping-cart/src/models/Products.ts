@@ -1,4 +1,4 @@
-export type Product = {
+export interface Product {
   id: number
   title: string
   description: string
@@ -10,4 +10,8 @@ export type Product = {
   category: string
   thumbnail: string
   images: Array<string>
+}
+
+export interface CartProduct extends Product {
+  quantity: number
 }

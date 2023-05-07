@@ -45,7 +45,7 @@ export function FiltersProvider({ children }: Props) {
    * These functions are a safety way to set the values into the context
    * avoiding unexpected values
    *
-   * These is following the man-in-the-middle design pattern
+   * This is following the man-in-the-middle design pattern
    */
 
   const setCategory = (category: string) => {
