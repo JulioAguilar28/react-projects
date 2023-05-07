@@ -1,20 +1,14 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { products as initialProducts } from '../../mocks/products.json'
 import ProductView from './ProductView'
 import { Product } from '~/models/Products'
-import { FiltersContext } from '../../context/Filters'
+import { useFilters } from '../../hooks/useFilters'
 import './Products.css'
 
 function ProductsController() {
   const [products, setProducts] = useState<Array<Product>>(initialProducts)
-  const { minPrice, category } = useContext(FiltersContext)
 
-  const filterProducts = (products: Array<Product>) => {
-    return products.filter(
-      (product) =>
-        product.price >= minPrice && (category === 'all' || product.category === category)
-    )
-  }
+  const { filterProducts } = useFilters()
 
   const filteredProducts = filterProducts(products)
 

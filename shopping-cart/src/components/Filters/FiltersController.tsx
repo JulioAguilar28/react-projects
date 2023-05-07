@@ -1,12 +1,12 @@
-import { useId, ChangeEvent, useContext } from 'react'
-import { FiltersContext } from '../../context/Filters'
+import { useId, ChangeEvent } from 'react'
+import { useFilters } from '../../hooks/useFilters'
 import './Filters.css'
 
 function FiltersController() {
   const minPriceFilterId = useId()
   const categoryFilterId = useId()
 
-  const { minPrice, setMinPrice, setCategory } = useContext(FiltersContext)
+  const { minPrice, setMinPrice, setCategory } = useFilters()
 
   const setMinPriceHandler = (event: ChangeEvent<HTMLInputElement>) => {
     setMinPrice(Number(event.target.value))
