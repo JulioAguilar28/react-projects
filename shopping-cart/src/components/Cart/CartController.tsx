@@ -6,7 +6,6 @@ import './Cart.css'
 
 function CartController() {
   const { cart, addProductQuantity, clearCart } = useCart()
-
   const cartCheckboxId = useId()
 
   return (

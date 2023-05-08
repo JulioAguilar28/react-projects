@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { ReactNode, createContext, useState } from 'react'
+import { ReactNode, createContext } from 'react'
 import { CartProduct, Product } from '../models/Products'
+import { useCartReducer } from '../hooks/useCartReducer'
 
 interface CartContextState {
   cart: Array<CartProduct>
@@ -23,44 +24,12 @@ type Props = {
 }
 
 export function CartProvider({ children }: Props) {
-  const [cart, setCart] = useState<Array<CartProduct>>([])
-
-  const addToCart = (product: Product) => {
-    const alreadyInCart = cart.some((cartProduct) => cartProduct.id === product.id)
-
-    if (alreadyInCart) return
-
-    setCart((oldState) => [
-      ...oldState,
-      {
-        ...product,
-        quantity: 1
-      }
-    ])
-  }
-
-  const addProductQuantity = (cartProduct: CartProduct) => {
-    const productIndex = cart.findIndex((product) => cartProduct.id === product.id)
-
-    if (productIndex > -1) {
-      const newCart = structuredClone(cart)
-      newCart[productIndex].quantity += 1
-      setCart(newCart)
-    }
-  }
-
-  const clearCart = () => {
-    setCart([])
-  }
-
-  const removeFromCart = (cartProduct: Product) => {
-    setCart((oldState) => oldState.filter((oldCartProduct) => oldCartProduct.id !== cartProduct.id))
-  }
+  const { state, addToCart, removeFromCart, addProductQuantity, clearCart } = useCartReducer()
 
   return (
     <CartContext.Provider
       value={{
-        cart,
+        cart: state,
         addToCart,
         removeFromCart,
         addProductQuantity,
