@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, ChangeEvent } from 'react'
 import randomUsersResponse from '../mocks/random-users.json'
 
 interface User {
@@ -20,6 +20,8 @@ const parseUser = (json: any): User => ({
 function RandomUsersController() {
   const [users, setUsers] = useState<Array<User>>([])
   const [bodyColors, setBodyColors] = useState<boolean>(false)
+  const [sortByCountry, setSortByCountry] = useState<boolean>(false)
+  const [countryFilter, setCountryFilter] = useState<string>('')
 
   useEffect(() => {
     const data = randomUsersResponse.results
@@ -27,15 +29,52 @@ function RandomUsersController() {
     setUsers(parsedUsers)
   }, [])
 
+  const filteredUsersByCountryAlphabetically = useMemo(() => {
+    if (!sortByCountry) return users
+
+    return [...users].sort((userA, userB) => {
+      const countryA = userA.country.toLowerCase()
+      const countryB = userB.country.toLowerCase()
+
+      return countryA < countryB ? -1 : countryA > countryB ? 1 : 0
+    })
+  }, [users, sortByCountry])
+
+  const filteredUsersByCountry = useMemo(() => {
+    if (countryFilter === '') return users
+
+    return [...users].filter((user) =>
+      user.country.toLowerCase().includes(countryFilter.toLowerCase())
+    )
+  }, [users, countryFilter])
+
+  const filteredUsers = countryFilter
+    ? filteredUsersByCountry
+    : filteredUsersByCountryAlphabetically
+
   const handleChangeColors = () => {
     setBodyColors(!bodyColors)
   }
 
+  const handleSortByCountry = () => {
+    setSortByCountry(!sortByCountry)
+  }
+
+  const handleSetCountry = (event: ChangeEvent<HTMLInputElement>) => {
+    setCountryFilter(event.currentTarget.value)
+  }
+
   return (
     <section className="w-full flex flex-col gap-y-9">
-      <button className="w-auto self-center" onClick={handleChangeColors}>
-        Cambiar colores
-      </button>
+      <div className="w-auto self-center flex gap-x-4">
+        <button onClick={handleChangeColors}>Cambiar colores</button>
+
+        <button onClick={handleSortByCountry}>
+          {sortByCountry ? 'No ordenar por país' : 'Ordenar por país'}
+        </button>
+
+        <input type="text" onChange={handleSetCountry} />
+      </div>
 
       <table width="100%" className="border-separate border-spacing-1">
         <thead>
@@ -48,7 +87,7 @@ function RandomUsersController() {
         </thead>
 
         <tbody className={bodyColors ? 'even-odd-colors' : ''}>
-          {users.map((user) => {
+          {filteredUsers.map((user) => {
             return (
               <tr key={user.id} className="text-center align-middle">
                 <td className="flex justify-center items-center">
