@@ -19,6 +19,7 @@ const parseUser = (json: any): User => ({
 
 function RandomUsersController() {
   const [users, setUsers] = useState<Array<User>>([])
+  const [bodyColors, setBodyColors] = useState<boolean>(false)
 
   useEffect(() => {
     const data = randomUsersResponse.results
@@ -26,9 +27,17 @@ function RandomUsersController() {
     setUsers(parsedUsers)
   }, [])
 
+  const handleChangeColors = () => {
+    setBodyColors(!bodyColors)
+  }
+
   return (
-    <section className="w-full">
-      <table width="100%" className="border-separate border-spacing-y-4">
+    <section className="w-full flex flex-col gap-y-9">
+      <button className="w-auto self-center" onClick={handleChangeColors}>
+        Cambiar colores
+      </button>
+
+      <table width="100%" className="border-separate border-spacing-1">
         <thead>
           <tr>
             <th>Foto</th>
@@ -38,7 +47,7 @@ function RandomUsersController() {
           </tr>
         </thead>
 
-        <tbody>
+        <tbody className={bodyColors ? 'even-odd-colors' : ''}>
           {users.map((user) => {
             return (
               <tr key={user.id} className="text-center align-middle">
