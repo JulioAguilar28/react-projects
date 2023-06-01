@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, ChangeEvent } from 'react'
+import { useState, useEffect, useMemo, useRef, ChangeEvent } from 'react'
 import randomUsersResponse from '../mocks/random-users.json'
 
 interface User {
@@ -22,11 +22,17 @@ function RandomUsersController() {
   const [bodyColors, setBodyColors] = useState<boolean>(false)
   const [sortByCountry, setSortByCountry] = useState<boolean>(false)
   const [countryFilter, setCountryFilter] = useState<string>('')
+  /**
+   * Using a ref value, we can persist the value
+   * between each render
+   */
+  const originalUsers = useRef<Array<User>>([])
 
   useEffect(() => {
     const data = randomUsersResponse.results
     const parsedUsers = data.map(parseUser)
     setUsers(parsedUsers)
+    originalUsers.current = parsedUsers
   }, [])
 
   const filteredUsersByCountryAlphabetically = useMemo(() => {
@@ -64,6 +70,15 @@ function RandomUsersController() {
     setCountryFilter(event.currentTarget.value)
   }
 
+  const handleDeleteUser = (userId: string) => {
+    const newUsers = [...users].filter((user) => user.id !== userId)
+    setUsers(newUsers)
+  }
+
+  const handleRestoreState = () => {
+    setUsers(originalUsers.current)
+  }
+
   return (
     <section className="w-full flex flex-col gap-y-9">
       <div className="w-auto self-center flex gap-x-4">
@@ -73,7 +88,9 @@ function RandomUsersController() {
           {sortByCountry ? 'No ordenar por país' : 'Ordenar por país'}
         </button>
 
-        <input type="text" onChange={handleSetCountry} />
+        <button onClick={handleRestoreState}>Resetear estado</button>
+
+        <input type="text" placeholder="Brazil, Australia, ..." onChange={handleSetCountry} />
       </div>
 
       <table width="100%" className="border-separate border-spacing-1">
@@ -83,6 +100,7 @@ function RandomUsersController() {
             <th>Nombre</th>
             <th>Apellido</th>
             <th>País</th>
+            <th>Acciones</th>
           </tr>
         </thead>
 
@@ -96,6 +114,9 @@ function RandomUsersController() {
                 <td>{user.name}</td>
                 <td>{user.lastname}</td>
                 <td>{user.country}</td>
+                <td>
+                  <button onClick={() => handleDeleteUser(user.id)}>Borrar</button>
+                </td>
               </tr>
             )
           })}
