@@ -17,10 +17,17 @@ const parseUser = (json: any): User => ({
   country: json.location.country
 })
 
+export enum FilterOption {
+  None = 'none',
+  Country = 'country',
+  Name = 'name',
+  Lastname = 'lastname'
+}
+
 function RandomUsersController() {
   const [users, setUsers] = useState<Array<User>>([])
   const [bodyColors, setBodyColors] = useState<boolean>(false)
-  const [sortByCountry, setSortByCountry] = useState<boolean>(false)
+  const [filter, setFilter] = useState<FilterOption>(FilterOption.None)
   const [countryFilter, setCountryFilter] = useState<string>('')
   /**
    * Using a ref value, we can persist the value
@@ -35,39 +42,65 @@ function RandomUsersController() {
     originalUsers.current = parsedUsers
   }, [])
 
-  const filteredUsersByCountryAlphabetically = useMemo(() => {
-    if (!sortByCountry) return users
+  const filterUsersByCountry = (users: Array<User>, country: string) =>
+    users.filter((user) => user.country.toLowerCase().includes(country.toLowerCase()))
 
-    return [...users].sort((userA, userB) => {
+  const filterUsersByCountryAlphabetically = (users: Array<User>) => {
+    return users.sort((userA, userB) => {
       const countryA = userA.country.toLowerCase()
       const countryB = userB.country.toLowerCase()
 
       return countryA < countryB ? -1 : countryA > countryB ? 1 : 0
     })
-  }, [users, sortByCountry])
+  }
 
-  const filteredUsersByCountry = useMemo(() => {
-    if (countryFilter === '') return users
+  const filterUsersByName = (users: Array<User>) => {
+    return users.sort((userA, userB) => {
+      const nameA = userA.name.toLowerCase()
+      const nameB = userB.name.toLowerCase()
 
-    return [...users].filter((user) =>
-      user.country.toLowerCase().includes(countryFilter.toLowerCase())
-    )
-  }, [users, countryFilter])
+      return nameA < nameB ? -1 : nameA > nameB ? 1 : 0
+    })
+  }
 
-  const filteredUsers = countryFilter
-    ? filteredUsersByCountry
-    : filteredUsersByCountryAlphabetically
+  const filterUsersByLastname = (users: Array<User>) => {
+    return users.sort((userA, userB) => {
+      const nameA = userA.lastname.toLowerCase()
+      const nameB = userB.lastname.toLowerCase()
+
+      return nameA < nameB ? -1 : nameA > nameB ? 1 : 0
+    })
+  }
+
+  const filterOperation = useMemo(() => {
+    const operations = {
+      [FilterOption.Country]: filterUsersByCountryAlphabetically,
+      [FilterOption.Name]: filterUsersByName,
+      [FilterOption.Lastname]: filterUsersByLastname,
+      [FilterOption.None]: (users: Array<User>) => users
+    }
+
+    return operations[filter]
+  }, [filter])
+
+  const filteredUsers = useMemo(() => {
+    if (countryFilter !== '') return filterUsersByCountry([...users], countryFilter)
+
+    return filterOperation([...users])
+  }, [users, filterOperation, countryFilter])
 
   const handleChangeColors = () => {
     setBodyColors(!bodyColors)
   }
 
   const handleSortByCountry = () => {
-    setSortByCountry(!sortByCountry)
+    setFilter(filter === FilterOption.None ? FilterOption.Country : FilterOption.None)
   }
 
   const handleSetCountry = (event: ChangeEvent<HTMLInputElement>) => {
     setCountryFilter(event.currentTarget.value)
+    // const filteredUsers = filterUsersByCountry([...users], event.currentTarget.value)
+    // setUsers(filteredUsers)
   }
 
   const handleDeleteUser = (userId: string) => {
@@ -79,13 +112,17 @@ function RandomUsersController() {
     setUsers(originalUsers.current)
   }
 
+  const handleUsersFilter = (filter: FilterOption) => {
+    setFilter(filter)
+  }
+
   return (
     <section className="w-full flex flex-col gap-y-9">
       <div className="w-auto self-center flex gap-x-4">
         <button onClick={handleChangeColors}>Cambiar colores</button>
 
         <button onClick={handleSortByCountry}>
-          {sortByCountry ? 'No ordenar por país' : 'Ordenar por país'}
+          {filter === FilterOption.Country ? 'No ordenar por país' : 'Ordenar por país'}
         </button>
 
         <button onClick={handleRestoreState}>Resetear estado</button>
@@ -97,9 +134,9 @@ function RandomUsersController() {
         <thead>
           <tr>
             <th>Foto</th>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>País</th>
+            <th onClick={() => handleUsersFilter(FilterOption.Name)}>Nombre</th>
+            <th onClick={() => handleUsersFilter(FilterOption.Lastname)}>Apellido</th>
+            <th onClick={() => handleUsersFilter(FilterOption.Country)}>País</th>
             <th>Acciones</th>
           </tr>
         </thead>
