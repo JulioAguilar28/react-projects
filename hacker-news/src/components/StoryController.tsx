@@ -1,8 +1,10 @@
 import useStory from '../hooks/useStory'
 import styled from 'styled-components'
+import { Link } from 'wouter'
+import StoryLoader from './StoryLoader'
 
 type Props = {
-  id: number
+  id: string
   index: number
 }
 
@@ -19,8 +21,19 @@ const InfoContainer = styled.div`
   column-gap: 0.75rem;
 `
 
+const LinkSpan = styled.span`
+  cursor: pointer;
+  color: gray;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`
+
 function StoryController({ id, index }: Props) {
-  const { story } = useStory(id)
+  const { story, isLoading } = useStory(id)
+
+  if (isLoading) return <StoryLoader />
 
   return (
     <StoryContainer>
@@ -29,7 +42,9 @@ function StoryController({ id, index }: Props) {
       <InfoContainer>
         <span>{story?.score} points</span>
         <span>by {story?.by}</span>
-        <span>{story?.kids?.length ?? 0} comments</span>
+        <Link href={`/comments/${id}`}>
+          <LinkSpan>{story?.kids?.length ?? 0} comments</LinkSpan>
+        </Link>
       </InfoContainer>
     </StoryContainer>
   )

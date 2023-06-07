@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import * as StoryService from '../services/StoryService'
-import StoryController from './StoryController'
+import StoryController from '../components/StoryController'
+import useSWR from 'swr'
 
 const ControllerContainer = styled.div`
   padding: 0.5rem;
@@ -11,20 +12,31 @@ const ControllerContainer = styled.div`
 
 function TopStoriesController() {
   const [stories, setStories] = useState<Array<number>>([])
+  const [page, setPage] = useState<number>(1)
 
   useEffect(() => {
-    StoryService.getTopStories(1, 10).then((stories) => {
-      setStories(stories)
+    StoryService.getTopStories(page, 10).then((stories) => {
+      setStories((prevStories) => {
+        return [...prevStories, ...stories]
+      })
     })
-  }, [])
+  }, [page])
+
+  const handleMoreStories = () => {
+    setPage(page + 1)
+  }
 
   return (
     <ControllerContainer>
       <ul>
         {stories.map((value, index) => {
-          return <StoryController key={value} id={value} index={index} />
+          return <StoryController key={value} id={value.toString()} index={index} />
         })}
       </ul>
+
+      <span style={{ cursor: 'pointer' }} onClick={handleMoreStories}>
+        Load more
+      </span>
     </ControllerContainer>
   )
 }
