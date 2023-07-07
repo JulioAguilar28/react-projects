@@ -1,11 +1,20 @@
 import React from 'react'
-import { Dialog, DialogTitle, DialogContent, DialogContentText, Box, Typography } from '@mui/material'
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  Box,
+  Typography
+} from '@mui/material'
 import { Close } from '@mui/icons-material'
 
 function CharacterModal({ character, open, onClose }) {
   return (
     <Dialog
-      open={open} onClose={onClose} sx={{
+      open={open}
+      onClose={onClose}
+      sx={{
         display: 'flex',
         flexDirection: 'column',
         '& .MuiPaper-root': {
@@ -15,13 +24,15 @@ function CharacterModal({ character, open, onClose }) {
       }}
     >
       <Box
-        component='header' sx={{
+        component='header'
+        sx={{
           alignSelf: 'flex-end',
           padding: '8px',
           cursor: 'pointer'
         }}
         onClick={onClose}
-      ><Close />
+      >
+        <Close />
       </Box>
       <DialogTitle>{character.name}</DialogTitle>
       <DialogContent>
@@ -29,31 +40,32 @@ function CharacterModal({ character, open, onClose }) {
           {character.description || 'There is no description about this character'}
         </DialogContentText>
 
-        <Typography variant='h6'>
-          Comics
-        </Typography>
+        <Typography variant='h6'>Comics</Typography>
 
         <Box
-          component='ul' sx={{
+          component='ul'
+          sx={{
             listStyle: 'none',
             margin: '0',
             padding: '8px'
           }}
         >
-          {character.comics.items.map((comic) =>
+          {character.comics.items.map((comic) => (
             <DialogContentText key={`${character.name}-${comic.name}`}>
               <Box
-                component='li' sx={{
+                component='li'
+                sx={{
                   cursor: 'pointer',
                   ':hover': {
                     textDecoration: 'underline'
                   }
                 }}
                 onClick={() => onClose(comic)}
-              >{comic.name}
+              >
+                {comic.name}
               </Box>
             </DialogContentText>
-          )}
+          ))}
         </Box>
       </DialogContent>
     </Dialog>
