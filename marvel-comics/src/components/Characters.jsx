@@ -15,7 +15,7 @@ const CharacterListContainer = styled('ul')({
 function Characters({ characters }) {
   const [selectedCharacter, setSelectedCharacter] = useState(null)
   const [selectedComic, setSelectedComic] = useState(null)
-  const { comics, getByComicURI } = useComics()
+  const { comics, getByComicURI, loading: comicLoading } = useComics()
 
   const handleSelectedCharacter = (character) => {
     setSelectedCharacter(character)
@@ -50,7 +50,7 @@ function Characters({ characters }) {
         <CharacterModal open character={selectedCharacter} onClose={handleCloseCharacterModal} />
       )}
 
-      {selectedComic && (
+      {(selectedComic && !comicLoading) && (
         <ComicModal open comic={comics[0]} onClose={handleCloseComicModal} />
       )}
     </>
