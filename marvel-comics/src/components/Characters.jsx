@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import CharacterView from './CharacterView'
+import CharacterModal from './CharacterModal'
 import { styled } from '@mui/material/styles'
 
 const CharacterListContainer = styled('ul')({
@@ -9,13 +10,31 @@ const CharacterListContainer = styled('ul')({
   rowGap: '24px'
 })
 
-function Characters ({ characters }) {
+function Characters({ characters }) {
+  const [selectedCharacter, setSelectedCharacter] = useState(null)
+
+  const handleSelectedCharacter = (character) => {
+    setSelectedCharacter(character)
+  }
+
+  const handleCloseModal = (comic) => {
+    if (comic) {
+      console.log(comic)
+    }
+
+    setSelectedCharacter(null)
+  }
+
   return (
-    <CharacterListContainer>
-      {characters.map((character) => (
-        <CharacterView key={character.id} character={character} />
-      ))}
-    </CharacterListContainer>
+    <>
+      <CharacterListContainer>
+        {characters.map((character) => (
+          <CharacterView key={character.id} character={character} onSelected={handleSelectedCharacter} />
+        ))}
+      </CharacterListContainer>
+
+      {selectedCharacter && <CharacterModal open character={selectedCharacter} onClose={handleCloseModal} />}
+    </>
   )
 }
 

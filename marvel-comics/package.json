@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "prettier": "^3.0.0",
     "standard": "^17.1.0",
     "vite": "^4.3.9"
   },
@@ -24,6 +25,16 @@
     "react-redux": "^8.1.1"
   },
   "eslintConfig": {
-    "extends": "./node_modules/standard/eslintrc"
+    "extends": [
+      "./node_modules/standard/eslintrc"
+    ],
+    "rules": {
+      "space-before-function-paren": [
+        "error",
+        {
+          "named": "never"
+        }
+      ]
+    }
   }
 }

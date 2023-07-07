@@ -2,11 +2,17 @@ import React from 'react'
 import { styled } from '@mui/material/styles'
 import { Box } from '@mui/material'
 
-function CharacterView ({ character }) {
+function CharacterView({ character, onSelected }) {
   const characterThumbnail = `${character.thumbnail.path}/detail.${character.thumbnail.extension}`
 
   const CharacterContainer = styled('li')({
-    position: 'relative'
+    width: 'fit-content',
+    position: 'relative',
+    transition: 'all 200ms ease',
+    ':hover': {
+      transform: 'scale(1.1)'
+    },
+    cursor: 'pointer'
   })
 
   const Image = styled('img')({
@@ -17,7 +23,7 @@ function CharacterView ({ character }) {
   })
 
   return (
-    <CharacterContainer>
+    <CharacterContainer onClick={() => onSelected(character)}>
       <Box
         component='span' sx={{
           position: 'absolute',
